@@ -1,0 +1,87 @@
+@model LoginViewModel
+@{
+    ViewData["Title"] = "Sign In - EliteDrive";
+    var returnUrl = ViewBag.ReturnUrl as string;
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
+            <!-- Auth Glass Card -->
+            <div class="p-4 p-sm-5 rounded-4 shadow-lg" style="background: var(--bg-surface); border: 1px solid var(--border);">
+                <div class="text-center mb-4">
+                    <div class="brand-icon mx-auto mb-3" style="width: 48px; height: 48px; font-size: 1.25rem;">
+                        <i class="bi bi-speedometer2"></i>
+                    </div>
+                    <h2 class="h3 fw-bold text-white mb-1">Welcome Back</h2>
+                    <p class="text-muted small">Sign in to manage your luxury reservations</p>
+                </div>
+
+                <!-- 1-Click Quick Demo Login Helper -->
+                <div class="p-3 rounded-3 mb-4" style="background: rgba(79, 70, 229, 0.1); border: 1px solid rgba(79, 70, 229, 0.3);">
+                    <div class="d-flex align-items-center justify-content-between mb-2">
+                        <span class="small fw-bold text-primary"><i class="bi bi-lightning-charge-fill me-1"></i> Quick Demo Access</span>
+                        <span class="badge bg-primary bg-opacity-25 text-primary small">1-Click</span>
+                    </div>
+                    <div class="d-grid gap-2">
+                        <a asp-action="SwitchRole" asp-route-email="alex.morgan@example.com" class="btn btn-luxury-outline py-2 d-flex align-items-center justify-content-between" style="font-size: 0.85rem;">
+                            <span><i class="bi bi-person me-2"></i> Log in as <strong>Customer (Alex Morgan)</strong></span>
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                        <a asp-action="SwitchRole" asp-route-email="admin@vehiclerental.com" class="btn btn-luxury-outline py-2 d-flex align-items-center justify-content-between text-warning" style="font-size: 0.85rem; border-color: rgba(245, 158, 11, 0.4);">
+                            <span><i class="bi bi-shield-check me-2"></i> Log in as <strong>Admin (Elena Vance)</strong></span>
+                            <i class="bi bi-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="d-flex align-items-center my-3">
+                    <hr class="flex-grow-1" style="border-color: var(--border);" />
+                    <span class="px-3 text-dim small">OR SIGN IN MANUALLY</span>
+                    <hr class="flex-grow-1" style="border-color: var(--border);" />
+                </div>
+
+                <form asp-action="Login" method="post">
+                    <input type="hidden" name="returnUrl" value="@returnUrl" />
+                    
+                    <div asp-validation-summary="ModelOnly" class="alert alert-danger small py-2 mb-3"></div>
+
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold">Email Address</label>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-muted"><i class="bi bi-envelope"></i></span>
+                            <input asp-for="Email" class="form-control input-custom" placeholder="you@example.com" value="alex.morgan@example.com" required />
+                        </div>
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="d-flex justify-content-between">
+                            <label class="form-label text-muted small fw-bold">Password</label>
+                            <a href="#" class="small text-primary">Forgot password?</a>
+                        </div>
+                        <div class="input-group">
+                            <span class="input-group-text bg-dark border-secondary text-muted"><i class="bi bi-key"></i></span>
+                            <input asp-for="Password" type="password" class="form-control input-custom" value="password123" required />
+                        </div>
+                    </div>
+
+                    <div class="form-check mb-4">
+                        <input asp-for="RememberMe" class="form-check-input" type="checkbox" id="rememberMe" checked />
+                        <label class="form-check-label text-muted small" for="rememberMe">
+                            Remember this device for 30 days
+                        </label>
+                    </div>
+
+                    <button type="submit" class="btn btn-luxury-primary w-100 py-2 fs-6 mb-3">
+                        Sign In <i class="bi bi-arrow-right ms-1"></i>
+                    </button>
+
+                    <div class="text-center small text-muted">
+                        Don't have an account? 
+                        <a asp-action="Register" class="text-primary fw-bold">Create Account</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

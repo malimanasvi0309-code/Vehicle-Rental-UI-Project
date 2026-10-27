@@ -1,0 +1,213 @@
+@model BookingCreateViewModel
+@{
+    ViewData["Title"] = $"Reserve {Model.Vehicle?.FullName}";
+}
+
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb small text-muted">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-dim">Home</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Vehicle" asp-action="Index" class="text-dim">Fleet</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Vehicle" asp-action="Details" asp-route-id="@Model.VehicleId" class="text-dim">@Model.Vehicle?.FullName</a></li>
+            <li class="breadcrumb-item active text-white" aria-current="page">Complete Reservation</li>
+        </ol>
+    </nav>
+
+    <div class="d-flex align-items-center gap-3 mb-4">
+        <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 48px; height: 48px; background: rgba(79, 70, 229, 0.2); color: #818cf8;">
+            <i class="bi bi-shield-check fs-4"></i>
+        </div>
+        <div>
+            <h1 class="h3 fw-bold text-white mb-0">Secure Vehicle Reservation</h1>
+            <p class="text-muted small mb-0">Fast checkout with instant confirmation & full insurance protection</p>
+        </div>
+    </div>
+
+    <form asp-action="Create" method="post">
+        <input type="hidden" asp-for="VehicleId" />
+
+        <div class="row g-4">
+            <!-- Left Form Fields -->
+            <div class="col-lg-8">
+                <!-- 1. Customer Information -->
+                <div class="p-4 rounded-4 mb-4" style="background: var(--bg-surface); border: 1px solid var(--border);">
+                    <h5 class="fw-bold text-white mb-3 d-flex align-items-center gap-2">
+                        <span class="badge bg-primary text-white rounded-circle p-1 px-2" style="font-size: 0.8rem;">1</span>
+                        Primary Driver Information
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small fw-bold">Full Legal Name</label>
+                            <input asp-for="CustomerName" class="form-control input-custom" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small fw-bold">Email Address (for confirmation)</label>
+                            <input asp-for="CustomerEmail" type="email" class="form-control input-custom" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small fw-bold">Mobile Phone Number</label>
+                            <input asp-for="CustomerPhone" class="form-control input-custom" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small fw-bold">Driver License State / Number</label>
+                            <input type="text" class="form-control input-custom" value="DL-CA-889104" placeholder="DL-State-Number" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Rental Schedule & Locations -->
+                <div class="p-4 rounded-4 mb-4" style="background: var(--bg-surface); border: 1px solid var(--border);">
+                    <h5 class="fw-bold text-white mb-3 d-flex align-items-center gap-2">
+                        <span class="badge bg-primary text-white rounded-circle p-1 px-2" style="font-size: 0.8rem;">2</span>
+                        Schedule & Pick-up Hub
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small fw-bold">Pick-up Date</label>
+                            <input asp-for="StartDate" type="date" id="calcStartDate" class="form-control input-custom" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small fw-bold">Return Date</label>
+                            <input asp-for="EndDate" type="date" id="calcEndDate" class="form-control input-custom" required />
+                            <span asp-validation-for="EndDate" class="text-danger small"></span>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small fw-bold">Pick-up Hub</label>
+                            <select asp-for="PickupLocation" class="form-select input-custom">
+                                <option value="Downtown Luxury Showroom - 450 Grand Ave">Downtown Luxury Showroom (450 Grand Ave)</option>
+                                <option value="LAX International Airport VIP Terminal 3">LAX VIP Terminal 3 (Direct Curbside Delivery)</option>
+                                <option value="Coastline Marina Yacht Club">Coastline Marina Yacht Club</option>
+                                <option value="Private Hotel Concierge Delivery">Private Hotel Concierge Delivery</option>
+                            </select>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small fw-bold">Drop-off Hub</label>
+                            <select asp-for="DropoffLocation" class="form-select input-custom">
+                                <option value="Downtown Luxury Showroom - 450 Grand Ave">Downtown Luxury Showroom (450 Grand Ave)</option>
+                                <option value="LAX International Airport VIP Terminal 3">LAX VIP Terminal 3 (Direct Curbside Delivery)</option>
+                                <option value="Coastline Marina Yacht Club">Coastline Marina Yacht Club</option>
+                                <option value="Private Hotel Concierge Delivery">Private Hotel Concierge Delivery</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. VIP Protection & Add-ons -->
+                <div class="p-4 rounded-4 mb-4" style="background: var(--bg-surface); border: 1px solid var(--border);">
+                    <h5 class="fw-bold text-white mb-3 d-flex align-items-center gap-2">
+                        <span class="badge bg-primary text-white rounded-circle p-1 px-2" style="font-size: 0.8rem;">3</span>
+                        Protection & Convenience Options
+                    </h5>
+                    <div class="mb-3">
+                        <label class="form-label text-muted small fw-bold">Select Coverage Tier</label>
+                        <select asp-for="InsuranceOption" id="calcInsurance" class="form-select input-custom">
+                            <option value="Comprehensive" selected>Comprehensive Premium (Zero Deductible + 24/7 Roadside) - ₹2,500/trip</option>
+                            <option value="Basic">Standard Collision Waiver (₹5,000 Deductible) - ₹1,200/trip</option>
+                            <option value="None">Primary Personal Auto Insurance - ₹0</option>
+                        </select>
+                    </div>
+
+                    <div class="d-flex flex-column gap-2 mt-3">
+                        <div class="form-check p-3 rounded-3" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border);">
+                            <input asp-for="AddGps" class="form-check-input" type="checkbox" id="checkGps" checked />
+                            <label class="form-check-label text-white small fw-bold" for="checkGps">
+                                Satellite GPS & High-Speed WiFi Hotspot <span class="badge bg-success ms-2">Complimentary</span>
+                            </label>
+                        </div>
+                        <div class="form-check p-3 rounded-3" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border);">
+                            <input asp-for="AdditionalDriver" class="form-check-input" type="checkbox" id="checkDriver" />
+                            <label class="form-check-label text-white small fw-bold" for="checkDriver">
+                                Additional Verified Driver Coverage <span class="badge bg-secondary ms-2">Free</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4. Payment Simulation -->
+                <div class="p-4 rounded-4 mb-4" style="background: var(--bg-surface); border: 1px solid var(--border);">
+                    <h5 class="fw-bold text-white mb-3 d-flex align-items-center gap-2">
+                        <span class="badge bg-primary text-white rounded-circle p-1 px-2" style="font-size: 0.8rem;">4</span>
+                        Payment Details
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small fw-bold">Card Number</label>
+                            <div class="input-group">
+                                <span class="input-group-text bg-dark border-secondary text-muted"><i class="bi bi-credit-card"></i></span>
+                                <input asp-for="CardNumber" class="form-control input-custom" required />
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small fw-bold">Name on Card</label>
+                            <input asp-for="CardHolder" class="form-control input-custom" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small fw-bold">Expiration Date</label>
+                            <input asp-for="CardExpiry" class="form-control input-custom" placeholder="MM/YY" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label text-muted small fw-bold">CVV Code</label>
+                            <input asp-for="CardCvv" class="form-control input-custom" placeholder="123" required />
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Summary Sticky Column -->
+            <div class="col-lg-4">
+                <div class="booking-summary-card">
+                    <h5 class="fw-bold text-white mb-3">Reservation Summary</h5>
+
+                    <!-- Selected Vehicle Card -->
+                    <div class="d-flex gap-3 mb-3 pb-3 border-bottom" style="border-color: var(--border) !important;">
+                        <img src="@Model.Vehicle?.ImageUrl" alt="@Model.Vehicle?.FullName" class="rounded-3" style="width: 80px; height: 60px; object-fit: cover;" />
+                        <div>
+                            <span class="text-cyan small fw-bold">@Model.Vehicle?.Make</span>
+                            <div class="fw-bold text-white">@Model.Vehicle?.Model</div>
+                            <div class="text-muted small">@Model.Vehicle?.Category &bull; @Model.Vehicle?.Transmission</div>
+                        </div>
+                    </div>
+
+                    <!-- Pricing Calculation -->
+                    <div class="p-3 rounded-3 mb-3" style="background: rgba(0,0,0,0.3); border: 1px solid var(--border);">
+                        <div class="d-flex justify-content-between small text-muted mb-2">
+                            <span>Daily Rate</span>
+                            <span id="calcDailyRate" data-rate="@Model.Vehicle?.DailyRate" class="text-white">₹@Model.Vehicle?.DailyRate.ToString("N0") / day</span>
+                        </div>
+                        <div class="d-flex justify-content-between small text-muted mb-2">
+                            <span>Estimated Duration</span>
+                            <span id="calcTotalDays" class="text-white fw-bold">3 Days</span>
+                        </div>
+                        <div class="d-flex justify-content-between small text-muted mb-2">
+                            <span>Rental Subtotal</span>
+                            <span id="calcRentalSubtotal" class="text-white">₹@(((Model.Vehicle?.DailyRate ?? 0) * 3).ToString("N0"))</span>
+                        </div>
+                        <div class="d-flex justify-content-between small text-muted mb-2">
+                            <span>VIP Protection Plan</span>
+                            <span id="calcInsuranceFee" class="text-white">₹2,500</span>
+                        </div>
+                        <div class="d-flex justify-content-between small text-muted mb-2">
+                            <span>Facility Concierge Fee</span>
+                            <span class="text-white">₹1,500</span>
+                        </div>
+                        <div class="border-top pt-2 mt-2 d-flex justify-content-between align-items-center" style="border-color: var(--border) !important;">
+                            <span class="fw-bold text-white">Total Amount</span>
+                            <span id="calcGrandTotal" class="h4 fw-bold text-success mb-0">
+                                ₹@((((Model.Vehicle?.DailyRate ?? 0) * 3) + 4000).ToString("N0"))
+                            </span>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn btn-luxury-primary w-100 py-3 fs-6 mb-2">
+                        <i class="bi bi-lock-fill me-1"></i> Confirm & Authorize Booking
+                    </button>
+
+                    <div class="text-center small text-dim mt-2">
+                        <i class="bi bi-shield-lock me-1"></i> 256-Bit SSL Encrypted & Verified
+                    </div>
+                </div>
+            </div>
+        </div>
+    </form>
+</div>

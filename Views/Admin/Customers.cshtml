@@ -1,0 +1,95 @@
+@model List<User>
+@{
+    ViewData["Title"] = "Customer Directory - Admin Portal";
+}
+
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb small text-muted mb-1">
+                    <li class="breadcrumb-item"><a asp-action="Index" class="text-dim">Dashboard</a></li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">Customer Directory</li>
+                </ol>
+            </nav>
+            <h1 class="h2 fw-bold text-white mb-0">Verified Customer Directory</h1>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Index" class="btn btn-luxury-outline py-2 px-3 small">
+                <i class="bi bi-arrow-left me-1"></i> Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Customers Table Card -->
+    <div class="p-4 rounded-4 shadow-lg" style="background: var(--bg-surface); border: 1px solid var(--border);">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="text-muted small">Total Active Clients: <strong class="text-white">@Model.Count</strong></div>
+            <div class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50 py-1 px-3">
+                <i class="bi bi-shield-check me-1"></i> 100% Identity Verified
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>Client</th>
+                        <th>Contact</th>
+                        <th>Driver License</th>
+                        <th>Member Since</th>
+                        <th>Total Rentals</th>
+                        <th>Tier</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var u in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <img src="@u.AvatarUrl" alt="@u.FullName" class="rounded-circle shadow-sm" style="width: 44px; height: 44px; object-fit: cover;" />
+                                    <div>
+                                        <div class="fw-bold text-white">@u.FullName</div>
+                                        <small class="text-dim">User ID: #@u.Id</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="text-white small">@u.Email</div>
+                                <small class="text-dim">@u.Phone</small>
+                            </td>
+                            <td>
+                                <span class="badge bg-dark border border-secondary text-white font-monospace px-2 py-1">
+                                    @u.DriverLicenseNumber
+                                </span>
+                            </td>
+                            <td>
+                                <div class="text-white small">@u.MemberSince.ToString("MMM yyyy")</div>
+                            </td>
+                            <td>
+                                <span class="fw-bold text-primary fs-6">@u.TotalRentals</span>
+                                <small class="text-dim">Completed trips</small>
+                            </td>
+                            <td>
+                                @if (u.TotalRentals >= 4)
+                                {
+                                    <span class="badge bg-warning text-dark fw-bold">Diamond VIP</span>
+                                }
+                                else if (u.TotalRentals >= 2)
+                                {
+                                    <span class="badge bg-primary text-white">Platinum Member</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary text-white">Standard</span>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

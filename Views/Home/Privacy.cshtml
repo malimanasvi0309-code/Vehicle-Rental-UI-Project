@@ -1,0 +1,56 @@
+@{
+    ViewData["Title"] = "Rental Terms & Privacy Policy - EliteDrive";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-9">
+            <div class="p-4 p-md-5 rounded-4 shadow-lg" style="background: var(--bg-surface); border: 1px solid var(--border);">
+                <div class="mb-4 pb-3 border-bottom" style="border-color: var(--border) !important;">
+                    <div class="badge bg-primary text-white py-1 px-3 rounded-pill fw-bold small mb-2">Legal & Protection</div>
+                    <h1 class="h2 fw-bold text-white mb-1">Rental Policies & Privacy Commitment</h1>
+                    <p class="text-muted small">Updated for the 2026 fleet season</p>
+                </div>
+
+                <div class="d-flex flex-column gap-4 text-muted">
+                    <section>
+                        <h4 class="h5 fw-bold text-white mb-2"><i class="bi bi-shield-lock-fill text-primary me-2"></i> 1. Privacy & Driver Data Security</h4>
+                        <p class="small">
+                            At EliteDrive, we take your personal confidentiality with utmost seriousness. All identity verification records, driver license numbers, and payment details are encrypted using banking-grade 256-bit AES protocols. We do not sell or monetize personal travel telematics to third parties.
+                        </p>
+                    </section>
+
+                    <section>
+                        <h4 class="h5 fw-bold text-white mb-2"><i class="bi bi-key-fill text-success me-2"></i> 2. Driver Eligibility & Verification</h4>
+                        <p class="small">
+                            Drivers must be at least 21 years of age for executive sedans and SUVs, and at least 25 years of age for high-performance supercars (Porsche, AMG, Plaid). A valid government-issued driver license and clean driving record are required at the time of key collection.
+                        </p>
+                    </section>
+
+                    <section>
+                        <h4 class="h5 fw-bold text-white mb-2"><i class="bi bi-file-earmark-check-fill text-cyan me-2"></i> 3. Comprehensive VIP Coverage</h4>
+                        <p class="small">
+                            Every rental booked through EliteDrive includes secondary collision damage protection and 24/7 dedicated roadside concierge. Optional zero-deductible comprehensive protection provides total peace of mind against tire, glass, and minor bodywork scuffs.
+                        </p>
+                    </section>
+
+                    <section>
+                        <h4 class="h5 fw-bold text-white mb-2"><i class="bi bi-arrow-repeat text-warning me-2"></i> 4. Flexible Cancellation Guarantee</h4>
+                        <p class="small">
+                            Plans change. Any reservation cancelled at least 24 hours prior to the scheduled pick-up window qualifies for a 100% full refund back to the original method of payment with zero processing penalties.
+                        </p>
+                    </section>
+                </div>
+
+                <div class="mt-4 pt-4 border-top d-flex justify-content-between align-items-center" style="border-color: var(--border) !important;">
+                    <a asp-controller="Home" asp-action="Index" class="btn btn-luxury-outline py-2 px-4">
+                        <i class="bi bi-arrow-left me-1"></i> Return to Home
+                    </a>
+                    <a asp-controller="Vehicle" asp-action="Index" class="btn btn-luxury-primary py-2 px-4">
+                        Browse Fleet
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

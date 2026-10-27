@@ -1,0 +1,155 @@
+@model List<Booking>
+@{
+    ViewData["Title"] = "My Reservations - EliteDrive";
+    var currentUser = ViewBag.CurrentUser as User;
+}
+
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h1 class="h2 fw-bold text-white mb-1">My Reservations</h1>
+            <p class="text-muted small mb-0">Manage your active itineraries, review trip details, and download rental vouchers.</p>
+        </div>
+        <div class="d-flex align-items-center gap-3">
+            <span class="text-muted small">Viewing as: <strong class="text-white">@currentUser?.FullName</strong></span>
+            <a asp-controller="Vehicle" asp-action="Index" class="btn btn-luxury-primary py-2 px-3 small">
+                <i class="bi bi-plus-circle me-1"></i> New Booking
+            </a>
+        </div>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="d-flex flex-column gap-4">
+            @foreach (var b in Model)
+            {
+                <div class="p-4 rounded-4 shadow-lg" style="background: var(--bg-surface); border: 1px solid var(--border);">
+                    <div class="row g-4 align-items-center">
+                        <!-- Vehicle Thumbnail -->
+                        <div class="col-lg-3 col-md-4">
+                            <div class="rounded-3 overflow-hidden position-relative shadow" style="height: 160px; background: #0c111c;">
+                                <img src="@b.Vehicle?.ImageUrl" alt="@b.Vehicle?.FullName" class="w-100 h-100" style="object-fit: cover;" />
+                                <span class="badge-category" style="top: 10px; left: 10px;">@b.Vehicle?.Category</span>
+                            </div>
+                        </div>
+
+                        <!-- Reservation Details -->
+                        <div class="col-lg-6 col-md-8">
+                            <div class="d-flex flex-wrap align-items-center gap-2 mb-2">
+                                <span class="font-monospace text-primary fw-bold">@b.BookingReference</span>
+                                <span>&bull;</span>
+                                <span class="text-dim small">Booked on @b.CreatedAt.ToString("MMM dd, yyyy")</span>
+                                
+                                <!-- Status Badge -->
+                                @if (b.Status == BookingStatus.Active)
+                                {
+                                    <span class="status-pill status-active ms-auto">
+                                        <i class="bi bi-broadcast"></i> On The Road (Active)
+                                    </span>
+                                }
+                                else if (b.Status == BookingStatus.Confirmed)
+                                {
+                                    <span class="status-pill status-confirmed ms-auto">
+                                        <i class="bi bi-check-circle-fill"></i> Confirmed & Ready
+                                    </span>
+                                }
+                                else if (b.Status == BookingStatus.Completed)
+                                {
+                                    <span class="status-pill status-completed ms-auto">
+                                        <i class="bi bi-flag-fill"></i> Completed
+                                    </span>
+                                }
+                                else if (b.Status == BookingStatus.Cancelled)
+                                {
+                                    <span class="status-pill status-cancelled ms-auto">
+                                        <i class="bi bi-x-circle-fill"></i> Cancelled
+                                    </span>
+                                }
+                            </div>
+
+                            <h3 class="h4 fw-bold text-white mb-2">@b.Vehicle?.FullName</h3>
+
+                            <div class="row g-2 small text-muted mb-3">
+                                <div class="col-sm-6">
+                                    <div><i class="bi bi-calendar-event text-primary me-1"></i> Pick-up: <strong class="text-white">@b.StartDate.ToString("MMM dd, yyyy")</strong></div>
+                                    <div class="text-truncate text-dim"><i class="bi bi-geo-alt me-1"></i> @b.PickupLocation</div>
+                                </div>
+                                <div class="col-sm-6">
+                                    <div><i class="bi bi-calendar2-check text-primary me-1"></i> Return: <strong class="text-white">@b.EndDate.ToString("MMM dd, yyyy")</strong></div>
+                                    <div class="text-truncate text-dim"><i class="bi bi-geo-alt me-1"></i> @b.DropoffLocation</div>
+                                </div>
+                            </div>
+
+                            <div class="d-flex gap-3 small text-dim">
+                                <span>Duration: <strong class="text-white">@b.TotalDays Days</strong></span>
+                                <span>&bull;</span>
+                                <span>Rate: <strong class="text-white">₹@b.DailyRate.ToString("N0")/day</strong></span>
+                                <span>&bull;</span>
+                                <span>Paid: <strong class="text-success">₹@b.TotalAmount.ToString("N0")</strong></span>
+                            </div>
+                        </div>
+
+                        <!-- Action Buttons -->
+                        <div class="col-lg-3 col-md-12 d-flex flex-lg-column justify-content-end gap-2">
+                            <a asp-action="Confirmation" asp-route-reference="@b.BookingReference" class="btn btn-luxury-outline py-2 text-center" style="font-size: 0.88rem;">
+                                <i class="bi bi-receipt me-1"></i> View Receipt
+                            </a>
+
+                            @if (b.Status == BookingStatus.Confirmed || b.Status == BookingStatus.Pending)
+                            {
+                                <!-- Cancel Trigger Modal Button -->
+                                <button type="button" class="btn btn-outline-danger py-2" data-bs-toggle="modal" data-bs-target="#cancelModal-@b.Id" style="font-size: 0.88rem;">
+                                    <i class="bi bi-x-circle me-1"></i> Cancel Reservation
+                                </button>
+
+                                <!-- Cancellation Modal Dialog -->
+                                <div class="modal fade" id="cancelModal-@b.Id" tabindex="-1" aria-labelledby="cancelModalLabel-@b.Id" aria-hidden="true">
+                                    <div class="modal-dialog modal-dialog-centered">
+                                        <div class="modal-content" style="background: var(--bg-surface); border: 1px solid var(--border); color: var(--text-main);">
+                                            <div class="modal-header border-bottom" style="border-color: var(--border) !important;">
+                                                <h5 class="modal-title fw-bold text-white" id="cancelModalLabel-@b.Id">
+                                                    Cancel Reservation #@b.BookingReference
+                                                </h5>
+                                                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body py-4">
+                                                <p class="mb-3 text-muted">
+                                                    Are you sure you want to cancel your upcoming booking for the <strong class="text-white">@b.Vehicle?.FullName</strong> scheduled from <strong class="text-white">@b.StartDate.ToString("MMM dd")</strong> to <strong class="text-white">@b.EndDate.ToString("MMM dd, yyyy")</strong>?
+                                                </p>
+                                                <div class="p-3 rounded-3" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.3);">
+                                                    <div class="small text-success fw-bold"><i class="bi bi-check-circle me-1"></i> 100% Full Refund Policy</div>
+                                                    <div class="small text-muted">A full refund of ₹@b.TotalAmount.ToString("N0") will be returned to your original payment method within 2-3 business days.</div>
+                                                </div>
+                                            </div>
+                                            <div class="modal-footer border-top" style="border-color: var(--border) !important;">
+                                                <button type="button" class="btn btn-luxury-outline" data-bs-dismiss="modal">Keep Booking</button>
+                                                <form asp-action="Cancel" method="post">
+                                                    <input type="hidden" name="id" value="@b.Id" />
+                                                    <button type="submit" class="btn btn-danger">
+                                                        Yes, Cancel Booking
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="p-5 text-center rounded-4 my-5" style="background: var(--bg-surface); border: 1px dashed var(--border);">
+            <i class="bi bi-calendar2-x fs-1 text-dim mb-3 d-block"></i>
+            <h4 class="text-white fw-bold">No active reservations found</h4>
+            <p class="text-muted small mb-4">You don't have any bookings yet. Choose from our world-class luxury fleet today.</p>
+            <a asp-controller="Vehicle" asp-action="Index" class="btn btn-luxury-primary py-2 px-4">
+                <i class="bi bi-car-front me-1"></i> Explore Fleet
+            </a>
+        </div>
+    }
+</div>

@@ -1,0 +1,200 @@
+@inject IVehicleRentalService RentalService
+@{
+    var currentUser = RentalService.GetCurrentUser();
+    var isAdmin = currentUser?.Role == UserRole.Admin;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - EliteDrive Luxury Vehicle Rental</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+    <!-- Top Glass Navbar -->
+    <header class="app-navbar">
+        <div class="container d-flex align-items-center justify-content-between">
+            <a class="brand-logo" asp-controller="Home" asp-action="Index">
+                <div class="brand-icon">
+                    <i class="bi bi-speedometer2"></i>
+                </div>
+                <span>Elite<span style="color: #6366f1;">Drive</span></span>
+            </a>
+
+            <!-- Navigation Links -->
+            <nav class="d-none d-md-flex align-items-center gap-2">
+                <a class="nav-link-custom @(ViewContext.RouteData.Values["controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["action"]?.ToString() == "Index" ? "active" : "")" 
+                   asp-controller="Home" asp-action="Index">
+                    <i class="bi bi-house-door me-1"></i> Home
+                </a>
+                <a class="nav-link-custom @(ViewContext.RouteData.Values["controller"]?.ToString() == "Vehicle" ? "active" : "")" 
+                   asp-controller="Vehicle" asp-action="Index">
+                    <i class="bi bi-car-front me-1"></i> Explore Fleet
+                </a>
+                <a class="nav-link-custom @(ViewContext.RouteData.Values["controller"]?.ToString() == "Booking" && ViewContext.RouteData.Values["action"]?.ToString() == "MyBookings" ? "active" : "")" 
+                   asp-controller="Booking" asp-action="MyBookings">
+                    <i class="bi bi-calendar-check me-1"></i> My Bookings
+                </a>
+                @if (isAdmin)
+                {
+                    <a class="nav-link-custom @(ViewContext.RouteData.Values["controller"]?.ToString() == "Admin" ? "active" : "")" 
+                       asp-controller="Admin" asp-action="Index" style="color: #fbbf24 !important;">
+                        <i class="bi bi-shield-lock-fill me-1"></i> Admin Panel
+                    </a>
+                }
+            </nav>
+
+            <!-- User & Role Switcher Actions -->
+            <div class="d-flex align-items-center gap-3">
+                <!-- Profile / Demo Switcher Dropdown -->
+                <div class="dropdown">
+                    <button class="btn btn-luxury-outline d-flex align-items-center gap-2 py-1 px-3" type="button" data-bs-toggle="dropdown" aria-expanded="false" style="font-size: 0.88rem;">
+                        <img src="@currentUser?.AvatarUrl" alt="Avatar" style="width: 28px; height: 28px; border-radius: 50%; object-fit: cover;" />
+                        <span class="d-none d-sm-inline font-weight-bold">@currentUser?.FullName</span>
+                        <span class="role-badge @(isAdmin ? "role-badge-admin" : "role-badge-customer")">
+                            @(isAdmin ? "ADMIN" : "CUSTOMER")
+                        </span>
+                        <i class="bi bi-chevron-down" style="font-size: 0.75rem;"></i>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg" style="background: #151d2f; border: 1px solid var(--border); min-width: 250px;">
+                        <li class="px-3 py-2 border-bottom" style="border-color: var(--border) !important;">
+                            <div class="text-white fw-bold">@currentUser?.FullName</div>
+                            <small class="text-muted">@currentUser?.Email</small>
+                        </li>
+                        <li><h6 class="dropdown-header text-uppercase text-dim mt-2" style="font-size: 0.7rem; letter-spacing: 0.08em;">Quick Switch Perspective</h6></li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center justify-content-between text-white" asp-controller="Account" asp-action="SwitchRole" asp-route-email="alex.morgan@example.com">
+                                <span><i class="bi bi-person me-2 text-primary"></i> Alex Morgan</span>
+                                <span class="badge bg-primary text-white" style="font-size: 0.7rem;">Customer</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="dropdown-item d-flex align-items-center justify-content-between text-white" asp-controller="Account" asp-action="SwitchRole" asp-route-email="admin@vehiclerental.com">
+                                <span><i class="bi bi-shield-check me-2 text-warning"></i> Elena Vance</span>
+                                <span class="badge bg-warning text-dark" style="font-size: 0.7rem;">Admin</span>
+                            </a>
+                        </li>
+                        <li><hr class="dropdown-divider" style="border-color: var(--border);"></li>
+                        <li>
+                            <a class="dropdown-item text-white" asp-controller="Account" asp-action="Profile">
+                                <i class="bi bi-person-circle me-2"></i> View Profile
+                            </a>
+                        </li>
+                        @if (isAdmin)
+                        {
+                            <li>
+                                <a class="dropdown-item text-warning" asp-controller="Admin" asp-action="Index">
+                                    <i class="bi bi-speedometer me-2"></i> Admin Dashboard
+                                </a>
+                            </li>
+                        }
+                        <li>
+                            <a class="dropdown-item text-danger" asp-controller="Account" asp-action="Logout">
+                                <i class="bi bi-box-arrow-right me-2"></i> Sign Out
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+
+                <a asp-controller="Vehicle" asp-action="Index" class="btn btn-luxury-primary d-none d-lg-inline-flex" style="padding: 0.55rem 1.25rem; font-size: 0.88rem;">
+                    <i class="bi bi-key-fill"></i> Rent Now
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- Global Flash Notification Messages -->
+    <div class="container mt-3">
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success alert-dismissible fade show border-0 text-white d-flex align-items-center gap-2" role="alert" style="background: rgba(16, 185, 129, 0.25); border-left: 4px solid #10b981 !important;">
+                <i class="bi bi-check-circle-fill text-success fs-5"></i>
+                <div>@TempData["SuccessMessage"]</div>
+                <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger alert-dismissible fade show border-0 text-white d-flex align-items-center gap-2" role="alert" style="background: rgba(244, 63, 94, 0.25); border-left: 4px solid #f43f5e !important;">
+                <i class="bi bi-exclamation-triangle-fill text-danger fs-5"></i>
+                <div>@TempData["ErrorMessage"]</div>
+                <button type="button" class="btn-close btn-close-white ms-auto" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        }
+    </div>
+
+    <!-- Main Content Area -->
+    <main role="main" class="pb-5">
+        @RenderBody()
+    </main>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <div class="container">
+            <div class="row g-4 mb-4">
+                <div class="col-lg-4 col-md-6">
+                    <div class="brand-logo mb-3">
+                        <div class="brand-icon" style="width: 32px; height: 32px;">
+                            <i class="bi bi-speedometer2" style="font-size: 0.9rem;"></i>
+                        </div>
+                        <span>Elite<span style="color: #6366f1;">Drive</span></span>
+                    </div>
+                    <p class="text-muted small pe-lg-4">
+                        EliteDrive delivers premier luxury, electric, and performance sports car rentals with VIP white-glove service, instant reservation, and zero hidden fees.
+                    </p>
+                    <div class="d-flex gap-3 text-muted">
+                        <a href="#" class="text-muted fs-5"><i class="bi bi-instagram"></i></a>
+                        <a href="#" class="text-muted fs-5"><i class="bi bi-twitter-x"></i></a>
+                        <a href="#" class="text-muted fs-5"><i class="bi bi-linkedin"></i></a>
+                        <a href="#" class="text-muted fs-5"><i class="bi bi-youtube"></i></a>
+                    </div>
+                </div>
+                <div class="col-lg-2 col-md-3 col-6">
+                    <h6 class="text-white fw-bold mb-3">Fleet</h6>
+                    <ul class="list-unstyled small d-flex flex-column gap-2 text-muted">
+                        <li><a href="/Vehicle?category=Sports" class="text-muted">Sports & Supercars</a></li>
+                        <li><a href="/Vehicle?category=Luxury" class="text-muted">Luxury Sedans</a></li>
+                        <li><a href="/Vehicle?category=SUV" class="text-muted">Executive SUVs</a></li>
+                        <li><a href="/Vehicle?category=Electric" class="text-muted">Electric & Hybrid</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-2 col-md-3 col-6">
+                    <h6 class="text-white fw-bold mb-3">Quick Links</h6>
+                    <ul class="list-unstyled small d-flex flex-column gap-2 text-muted">
+                        <li><a href="/Vehicle" class="text-muted">Browse All Vehicles</a></li>
+                        <li><a href="/Booking/MyBookings" class="text-muted">Manage Bookings</a></li>
+                        <li><a href="/Home/Privacy" class="text-muted">Rental Policies</a></li>
+                        <li><a href="/Account/Login" class="text-muted">Member Login</a></li>
+                    </ul>
+                </div>
+                <div class="col-lg-4 col-md-6">
+                    <h6 class="text-white fw-bold mb-3">VIP Concierge</h6>
+                    <p class="text-muted small mb-2"><i class="bi bi-geo-alt-fill text-primary me-2"></i> 450 Grand Avenue, Beverly Hills, CA</p>
+                    <p class="text-muted small mb-2"><i class="bi bi-telephone-fill text-primary me-2"></i> +1 (800) 555-ELITE (35483)</p>
+                    <p class="text-muted small mb-3"><i class="bi bi-envelope-fill text-primary me-2"></i> concierge@elitedrive.com</p>
+                    <div class="d-flex align-items-center gap-2 p-2 rounded" style="background: rgba(255,255,255,0.03); border: 1px solid var(--border);">
+                        <i class="bi bi-shield-check text-success fs-4"></i>
+                        <span class="small text-muted">24/7 Roadside Assistance & Full Coverage Protection</span>
+                    </div>
+                </div>
+            </div>
+            <div class="pt-3 border-top d-flex flex-column flex-sm-row justify-content-between align-items-center text-dim small" style="border-color: var(--border) !important;">
+                <div>&copy; 2026 EliteDrive Luxury Vehicle Rental. All rights reserved.</div>
+                <div class="d-flex gap-3 mt-2 mt-sm-0">
+                    <a asp-controller="Home" asp-action="Privacy" class="text-dim">Privacy Policy</a>
+                    <span>&bull;</span>
+                    <a asp-controller="Home" asp-action="Privacy" class="text-dim">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

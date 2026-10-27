@@ -1,0 +1,113 @@
+@model List<Vehicle>
+@{
+    ViewData["Title"] = "Fleet Management - Admin Portal";
+}
+
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb small text-muted mb-1">
+                    <li class="breadcrumb-item"><a asp-controller="Admin" asp-action="Index" class="text-dim">Dashboard</a></li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">Fleet Management</li>
+                </ol>
+            </nav>
+            <h1 class="h2 fw-bold text-white mb-0">Vehicle Fleet Portfolio</h1>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="AddVehicle" class="btn btn-luxury-primary py-2 px-3 small">
+                <i class="bi bi-plus-circle me-1"></i> Add New Vehicle
+            </a>
+            <a asp-action="Index" class="btn btn-luxury-outline py-2 px-3 small">
+                <i class="bi bi-arrow-left me-1"></i> Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Vehicles Table Card -->
+    <div class="p-4 rounded-4 shadow-lg" style="background: var(--bg-surface); border: 1px solid var(--border);">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div class="text-muted small">Total Active Vehicles: <strong class="text-white">@Model.Count</strong></div>
+            <div class="d-flex gap-2">
+                <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50 py-1 px-2">
+                    @Model.Count(v => v.IsAvailable) Available
+                </span>
+                <span class="badge bg-danger bg-opacity-25 text-danger border border-danger border-opacity-50 py-1 px-2">
+                    @Model.Count(v => !v.IsAvailable) Reserved/In Use
+                </span>
+            </div>
+        </div>
+
+        <div class="table-responsive">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>Vehicle</th>
+                        <th>Category</th>
+                        <th>Specs</th>
+                        <th>Daily Rate</th>
+                        <th>Rating</th>
+                        <th>Status</th>
+                        <th class="text-end">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var car in Model)
+                    {
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <img src="@car.ImageUrl" alt="@car.FullName" class="rounded-3 shadow-sm" style="width: 64px; height: 48px; object-fit: cover;" />
+                                    <div>
+                                        <div class="fw-bold text-white">@car.FullName</div>
+                                        <small class="text-dim">Plate: @car.LicensePlate &bull; @car.Color</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <span class="badge-category position-static d-inline-block" style="font-size: 0.72rem;">@car.Category</span>
+                            </td>
+                            <td>
+                                <div class="small text-white">@car.Transmission &bull; @car.FuelType</div>
+                                <small class="text-dim">@car.Seats Seats &bull; @car.Mileage</small>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-success fs-6">₹@car.DailyRate.ToString("N0")</div>
+                                <small class="text-dim">per day</small>
+                            </td>
+                            <td>
+                                <div class="text-warning small"><i class="bi bi-star-fill"></i> @car.Rating</div>
+                                <small class="text-dim">@car.ReviewCount reviews</small>
+                            </td>
+                            <td>
+                                <form asp-action="ToggleAvailability" method="post" class="d-inline">
+                                    <input type="hidden" name="id" value="@car.Id" />
+                                    <button type="submit" class="btn btn-sm p-0 border-0" title="Click to toggle availability">
+                                        <span class="badge-availability position-static d-inline-block @(car.IsAvailable ? "badge-available" : "badge-booked")" style="cursor: pointer;">
+                                            <i class="bi @(car.IsAvailable ? "bi-check-circle-fill" : "bi-clock-history") me-1"></i>
+                                            @(car.IsAvailable ? "Available" : "Reserved")
+                                        </span>
+                                    </button>
+                                </form>
+                            </td>
+                            <td class="text-end">
+                                <div class="d-flex justify-content-end gap-1">
+                                    <a asp-controller="Vehicle" asp-action="Details" asp-route-id="@car.Id" class="btn btn-luxury-outline py-1 px-2 small" title="View Public Page">
+                                        <i class="bi bi-eye"></i>
+                                    </a>
+                                    <form asp-action="DeleteVehicle" method="post" onsubmit="return confirm('Are you sure you want to remove this vehicle from the fleet?');" class="d-inline">
+                                        <input type="hidden" name="id" value="@car.Id" />
+                                        <button type="submit" class="btn btn-outline-danger py-1 px-2 small" title="Delete Vehicle">
+                                            <i class="bi bi-trash"></i>
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

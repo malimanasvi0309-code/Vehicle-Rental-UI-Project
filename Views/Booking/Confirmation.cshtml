@@ -1,0 +1,114 @@
+@model Booking
+@{
+    ViewData["Title"] = $"Booking Confirmed - {Model.BookingReference}";
+}
+
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <!-- Success Status Header -->
+            <div class="text-center mb-4">
+                <div class="rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center shadow-lg" 
+                     style="width: 72px; height: 72px; background: rgba(16, 185, 129, 0.2); border: 2px solid #10b981; color: #10b981;">
+                    <i class="bi bi-check-lg display-5"></i>
+                </div>
+                <span class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50 px-3 py-1 rounded-pill mb-2">
+                    Confirmed & Authorized
+                </span>
+                <h1 class="display-6 fw-bold text-white mb-2">Reservation Confirmed!</h1>
+                <p class="text-muted">A confirmation voucher has been sent to <span class="text-white fw-bold">@Model.CustomerEmail</span>.</p>
+            </div>
+
+            <!-- Receipt Voucher Box -->
+            <div class="p-4 p-md-5 rounded-4 shadow-lg mb-4" style="background: var(--bg-surface); border: 1px solid var(--border);">
+                <!-- Header inside voucher -->
+                <div class="d-flex flex-wrap justify-content-between align-items-center pb-4 mb-4 border-bottom" style="border-color: var(--border) !important;">
+                    <div>
+                        <div class="text-dim small text-uppercase fw-bold">Booking Reference Number</div>
+                        <div class="display-6 fw-bold text-primary font-monospace">@Model.BookingReference</div>
+                    </div>
+                    <div class="text-md-end mt-2 mt-md-0">
+                        <div class="text-dim small text-uppercase fw-bold">Date of Booking</div>
+                        <div class="text-white fw-bold">@Model.CreatedAt.ToString("MMM dd, yyyy - hh:mm tt")</div>
+                    </div>
+                </div>
+
+                <!-- Vehicle Details Summary -->
+                <div class="row g-4 align-items-center pb-4 mb-4 border-bottom" style="border-color: var(--border) !important;">
+                    <div class="col-md-4">
+                        <img src="@Model.Vehicle?.ImageUrl" alt="@Model.Vehicle?.FullName" class="img-fluid rounded-3 shadow" style="object-fit: cover; max-height: 140px; width: 100%;" />
+                    </div>
+                    <div class="col-md-8">
+                        <span class="text-cyan small fw-bold text-uppercase">@Model.Vehicle?.Category Fleet</span>
+                        <h3 class="h4 fw-bold text-white mb-1">@Model.Vehicle?.FullName</h3>
+                        <div class="text-muted small mb-2">License Plate: <span class="text-white">@Model.Vehicle?.LicensePlate</span> &bull; Color: <span class="text-white">@Model.Vehicle?.Color</span></div>
+                        <div class="d-flex gap-3 small text-muted">
+                            <span><i class="bi bi-gear-wide text-primary"></i> @Model.Vehicle?.Transmission</span>
+                            <span><i class="bi bi-fuel-pump text-primary"></i> @Model.Vehicle?.FuelType</span>
+                            <span><i class="bi bi-people text-primary"></i> @Model.Vehicle?.Seats Seats</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Trip Logistics -->
+                <div class="row g-4 pb-4 mb-4 border-bottom" style="border-color: var(--border) !important;">
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border);">
+                            <div class="d-flex align-items-center gap-2 text-primary small fw-bold mb-1">
+                                <i class="bi bi-box-arrow-up-right"></i> PICK-UP SCHEDULE
+                            </div>
+                            <div class="fs-6 fw-bold text-white mb-1">@Model.StartDate.ToString("dddd, MMMM dd, yyyy")</div>
+                            <div class="small text-muted"><i class="bi bi-geo-alt-fill text-dim"></i> @Model.PickupLocation</div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="p-3 rounded-3" style="background: rgba(255,255,255,0.02); border: 1px solid var(--border);">
+                            <div class="d-flex align-items-center gap-2 text-primary small fw-bold mb-1">
+                                <i class="bi bi-box-arrow-in-down-left"></i> RETURN SCHEDULE
+                            </div>
+                            <div class="fs-6 fw-bold text-white mb-1">@Model.EndDate.ToString("dddd, MMMM dd, yyyy")</div>
+                            <div class="small text-muted"><i class="bi bi-geo-alt-fill text-dim"></i> @Model.DropoffLocation</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payment Breakdown -->
+                <h5 class="fw-bold text-white mb-3">Charges Breakdown</h5>
+                <div class="p-3 rounded-3 mb-4" style="background: rgba(0,0,0,0.3); border: 1px solid var(--border);">
+                    <div class="d-flex justify-content-between small text-muted mb-2">
+                        <span>Daily Rate (₹@Model.DailyRate.ToString("N0") &times; @Model.TotalDays Days)</span>
+                        <span class="text-white">₹@((Model.DailyRate * Model.TotalDays).ToString("N0"))</span>
+                    </div>
+                    <div class="d-flex justify-content-between small text-muted mb-2">
+                        <span>VIP Comprehensive Protection</span>
+                        <span class="text-white">₹@Model.InsuranceFee.ToString("N0")</span>
+                    </div>
+                    <div class="d-flex justify-content-between small text-muted mb-2">
+                        <span>Concierge & Preparation Fee</span>
+                        <span class="text-white">₹@Model.ServiceFee.ToString("N0")</span>
+                    </div>
+                    <div class="border-top pt-2 mt-2 d-flex justify-content-between align-items-center" style="border-color: var(--border) !important;">
+                        <span class="fw-bold text-white fs-5">Total Paid / Authorized</span>
+                        <span class="h4 fw-bold text-success mb-0">₹@Model.TotalAmount.ToString("N0")</span>
+                    </div>
+                    <div class="small text-dim mt-2">Paid via: @Model.PaymentMethod</div>
+                </div>
+
+                <!-- Actions -->
+                <div class="d-flex flex-wrap gap-3 justify-content-between align-items-center">
+                    <button onclick="window.print()" class="btn btn-luxury-outline py-2 px-3">
+                        <i class="bi bi-printer me-2"></i> Print / Save Receipt
+                    </button>
+                    <div class="d-flex gap-2">
+                        <a asp-controller="Booking" asp-action="MyBookings" class="btn btn-luxury-primary py-2 px-4">
+                            <i class="bi bi-calendar-check me-2"></i> View My Bookings
+                        </a>
+                        <a asp-controller="Vehicle" asp-action="Index" class="btn btn-luxury-outline py-2 px-3">
+                            Browse More Fleet
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,207 @@
+@model Vehicle
+@{
+    ViewData["Title"] = $"{Model.FullName} - Luxury Vehicle Rental";
+    var relatedVehicles = ViewBag.RelatedVehicles as List<Vehicle> ?? new List<Vehicle>();
+}
+
+<div class="container py-4">
+    <!-- Breadcrumb -->
+    <nav aria-label="breadcrumb" class="mb-3">
+        <ol class="breadcrumb small text-muted">
+            <li class="breadcrumb-item"><a asp-controller="Home" asp-action="Index" class="text-dim">Home</a></li>
+            <li class="breadcrumb-item"><a asp-controller="Vehicle" asp-action="Index" class="text-dim">Fleet</a></li>
+            <li class="breadcrumb-item active text-white" aria-current="page">@Model.FullName</li>
+        </ol>
+    </nav>
+
+    <div class="row g-4">
+        <!-- Left Column: Media & Specifications -->
+        <div class="col-lg-8">
+            <!-- Showcase Image Card -->
+            <div class="position-relative rounded-4 overflow-hidden mb-4 shadow-lg" style="height: 440px; background: #0c111c; border: 1px solid var(--border);">
+                <img src="@Model.ImageUrl" alt="@Model.FullName" class="w-100 h-100" style="object-fit: cover;" />
+                <span class="badge-category fs-6 py-2 px-3">@Model.Category</span>
+                <span class="badge-availability fs-6 py-2 px-3 @(Model.IsAvailable ? "badge-available" : "badge-booked")">
+                    <i class="bi @(Model.IsAvailable ? "bi-check-circle-fill" : "bi-clock-history") me-1"></i>
+                    @(Model.IsAvailable ? "Available Now" : "Currently Booked")
+                </span>
+            </div>
+
+            <!-- Vehicle Header Info -->
+            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                <div>
+                    <span class="text-uppercase fw-bold text-cyan" style="font-size: 0.85rem; letter-spacing: 0.08em;">
+                        @Model.Make &bull; @Model.Year
+                    </span>
+                    <h1 class="display-6 fw-bold text-white mb-1">@Model.Model</h1>
+                    <div class="text-muted small">
+                        <i class="bi bi-geo-alt-fill text-primary"></i> Downtown Luxury Showroom &bull; Color: <span class="text-white">@Model.Color</span>
+                    </div>
+                </div>
+                <div class="text-md-end mt-2 mt-md-0">
+                    <div class="d-flex align-items-center gap-1 text-warning fs-5">
+                        <i class="bi bi-star-fill"></i>
+                        <span class="fw-bold text-white">@Model.Rating</span>
+                        <span class="text-dim small">(@Model.ReviewCount verified reviews)</span>
+                    </div>
+                    <div class="small text-success"><i class="bi bi-shield-check"></i> 100% Inspected & Detailed</div>
+                </div>
+            </div>
+
+            <!-- Description -->
+            <div class="p-4 rounded-4 mb-4" style="background: var(--bg-surface); border: 1px solid var(--border);">
+                <h4 class="h5 fw-bold text-white mb-2">Vehicle Overview</h4>
+                <p class="text-muted mb-0" style="line-height: 1.7;">
+                    @Model.Description
+                </p>
+            </div>
+
+            <!-- Detailed Specifications Grid -->
+            <div class="p-4 rounded-4 mb-4" style="background: var(--bg-surface); border: 1px solid var(--border);">
+                <h4 class="h5 fw-bold text-white mb-3"><i class="bi bi-cpu-fill text-primary me-2"></i> Technical Specifications</h4>
+                <div class="row g-3">
+                    <div class="col-sm-4 col-6">
+                        <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border);">
+                            <div class="text-dim small text-uppercase">Fuel Type</div>
+                            <div class="fw-bold text-white fs-6">@Model.FuelType</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 col-6">
+                        <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border);">
+                            <div class="text-dim small text-uppercase">Transmission</div>
+                            <div class="fw-bold text-white fs-6">@Model.Transmission</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 col-6">
+                        <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border);">
+                            <div class="text-dim small text-uppercase">Seating Capacity</div>
+                            <div class="fw-bold text-white fs-6">@Model.Seats Passengers</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 col-6">
+                        <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border);">
+                            <div class="text-dim small text-uppercase">Mileage Allowance</div>
+                            <div class="fw-bold text-white fs-6">@Model.Mileage</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 col-6">
+                        <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border);">
+                            <div class="text-dim small text-uppercase">License Plate</div>
+                            <div class="fw-bold text-white fs-6">@Model.LicensePlate</div>
+                        </div>
+                    </div>
+                    <div class="col-sm-4 col-6">
+                        <div class="p-3 rounded-3" style="background: rgba(255, 255, 255, 0.03); border: 1px solid var(--border);">
+                            <div class="text-dim small text-uppercase">Model Year</div>
+                            <div class="fw-bold text-white fs-6">@Model.Year Edition</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Features Included -->
+            <div class="p-4 rounded-4 mb-4" style="background: var(--bg-surface); border: 1px solid var(--border);">
+                <h4 class="h5 fw-bold text-white mb-3"><i class="bi bi-patch-check-fill text-success me-2"></i> Premium Features & Amenities</h4>
+                <div class="d-flex flex-wrap">
+                    @foreach (var feature in Model.Features)
+                    {
+                        <div class="feature-chip">
+                            <i class="bi bi-check-circle-fill text-success"></i>
+                            <span>@feature</span>
+                        </div>
+                    }
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Column: Instant Booking & Cost Calculator -->
+        <div class="col-lg-4">
+            <div class="booking-summary-card">
+                <div class="d-flex justify-content-between align-items-baseline mb-3 pb-3 border-bottom" style="border-color: var(--border) !important;">
+                    <div>
+                        <span class="text-dim small">Daily Rental Rate</span>
+                        <div class="price-tag">
+                            <span class="price-currency">₹</span>
+                            <span class="price-amount" id="calcDailyRate" data-rate="@Model.DailyRate">@Model.DailyRate.ToString("N0")</span>
+                            <span class="price-period">/ day</span>
+                        </div>
+                    </div>
+                    <div class="badge bg-success bg-opacity-25 text-success border border-success border-opacity-50 px-2 py-1 rounded">
+                        Best Rate Guarantee
+                    </div>
+                </div>
+
+                @if (Model.IsAvailable)
+                {
+                    <form asp-controller="Booking" asp-action="Create" method="get">
+                        <input type="hidden" name="vehicleId" value="@Model.Id" />
+
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-bold"><i class="bi bi-calendar-event me-1"></i> Pick-up Date</label>
+                            <input type="date" id="calcStartDate" name="startDate" class="form-control input-custom" value="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-bold"><i class="bi bi-calendar2-check me-1"></i> Return Date</label>
+                            <input type="date" id="calcEndDate" name="endDate" class="form-control input-custom" value="@DateTime.Today.AddDays(4).ToString("yyyy-MM-dd")" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label text-muted small fw-bold">Protection Plan</label>
+                            <select id="calcInsurance" class="form-select input-custom">
+                                <option value="Comprehensive" selected>Comprehensive VIP Coverage (₹2,500/trip)</option>
+                                <option value="Basic">Standard Collision Waiver (₹1,200/trip)</option>
+                                <option value="None">Third-Party Primary (₹0)</option>
+                            </select>
+                        </div>
+
+                        <!-- Real-time Cost Breakdown -->
+                        <div class="p-3 rounded-3 mb-3" style="background: rgba(0,0,0,0.3); border: 1px solid var(--border);">
+                            <div class="d-flex justify-content-between small text-muted mb-2">
+                                <span>Duration</span>
+                                <span id="calcTotalDays" class="text-white fw-bold">3 Days</span>
+                            </div>
+                            <div class="d-flex justify-content-between small text-muted mb-2">
+                                <span>Rental Subtotal</span>
+                                <span id="calcRentalSubtotal" class="text-white">₹@((Model.DailyRate * 3).ToString("N0"))</span>
+                            </div>
+                            <div class="d-flex justify-content-between small text-muted mb-2">
+                                <span>Protection & Roadside</span>
+                                <span id="calcInsuranceFee" class="text-white">₹2,500</span>
+                            </div>
+                            <div class="d-flex justify-content-between small text-muted mb-2">
+                                <span>Facility & Concierge Fee</span>
+                                <span class="text-white">₹1,500</span>
+                            </div>
+                            <div class="border-top pt-2 mt-2 d-flex justify-content-between align-items-center" style="border-color: var(--border) !important;">
+                                <span class="fw-bold text-white">Estimated Total</span>
+                                <span id="calcGrandTotal" class="h4 fw-bold text-white mb-0 text-success">
+                                    ₹@(((Model.DailyRate * 3) + 4000).ToString("N0"))
+                                </span>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="btn btn-luxury-primary w-100 py-3 fs-6">
+                            <i class="bi bi-key-fill me-2"></i> Reserve This Vehicle
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <div class="text-center p-4 rounded-3" style="background: rgba(244, 63, 94, 0.1); border: 1px solid rgba(244, 63, 94, 0.3);">
+                        <i class="bi bi-calendar-x text-danger fs-1 mb-2 d-block"></i>
+                        <h5 class="text-white fw-bold">Currently Unavailable</h5>
+                        <p class="text-muted small mb-3">This vehicle is currently on a live rental or booked by another client.</p>
+                        <a asp-action="Index" class="btn btn-luxury-outline w-100">
+                            Explore Similar Vehicles
+                        </a>
+                    </div>
+                }
+
+                <div class="mt-3 pt-3 border-top small text-muted text-center" style="border-color: var(--border) !important;">
+                    <i class="bi bi-lock-fill text-success me-1"></i> Free cancellation up to 24h prior to pickup
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

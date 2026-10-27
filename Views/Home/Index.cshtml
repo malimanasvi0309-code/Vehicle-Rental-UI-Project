@@ -1,0 +1,287 @@
+@{
+    ViewData["Title"] = "Luxury & Sports Car Rental Experience";
+    var featuredVehicles = ViewBag.FeaturedVehicles as List<Vehicle> ?? new List<Vehicle>();
+    var categories = ViewBag.Categories as List<string> ?? new List<string>();
+}
+
+<!-- Hero Section -->
+<section class="hero-wrapper">
+    <div class="container">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-7">
+                <div class="hero-pill">
+                    <i class="bi bi-stars text-warning"></i> Premier Luxury & Exotic Car Fleet
+                </div>
+                <h1 class="hero-title">
+                    Drive Your Dream. <br />
+                    <span>Unmatched Luxury</span> & Performance.
+                </h1>
+                <p class="hero-subtitle">
+                    Experience the thrill of commanding world-class supercars, ultra-luxury sedans, and high-performance electric vehicles with seamless instant booking.
+                </p>
+
+                <div class="d-flex flex-wrap gap-3">
+                    <a href="/Vehicle" class="btn btn-luxury-primary py-3 px-4 fs-6">
+                        <i class="bi bi-grid-fill"></i> Browse All Fleet
+                    </a>
+                    <a href="#featured-fleet" class="btn btn-luxury-outline py-3 px-4 fs-6">
+                        <i class="bi bi-arrow-down-circle"></i> Featured Vehicles
+                    </a>
+                </div>
+
+                <!-- Live Trust Stats -->
+                <div class="d-flex gap-4 mt-4 pt-3 border-top" style="border-color: var(--border) !important;">
+                    <div>
+                        <div class="fs-4 fw-bold text-white">500+</div>
+                        <div class="small text-muted">Happy Clients</div>
+                    </div>
+                    <div>
+                        <div class="fs-4 fw-bold text-white">4.96 ★</div>
+                        <div class="small text-muted">Verified Rating</div>
+                    </div>
+                    <div>
+                        <div class="fs-4 fw-bold text-white">100%</div>
+                        <div class="small text-muted">Instant Booking</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-5 d-none d-lg-block">
+                <div class="position-relative">
+                    <div style="position: absolute; width: 100%; height: 100%; background: radial-gradient(circle, rgba(99,102,241,0.25) 0%, transparent 70%); filter: blur(30px); z-index: 1;"></div>
+                    <img src="https://images.unsplash.com/photo-1614162692292-7ac56d7f7f1e?w=800&auto=format&fit=crop&q=80" 
+                         alt="Porsche 911" 
+                         class="img-fluid rounded-4 shadow-lg position-relative" 
+                         style="z-index: 2; border: 1px solid var(--border); transform: rotate(1deg);" />
+                    
+                    <!-- Floating Highlight Badge -->
+                    <div class="position-absolute p-3 rounded-3 shadow-lg" 
+                         style="bottom: -20px; left: -20px; z-index: 3; background: rgba(16, 23, 38, 0.95); backdrop-filter: blur(12px); border: 1px solid var(--border); min-width: 200px;">
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 42px; height: 42px; background: rgba(16, 185, 129, 0.2); color: #10b981;">
+                                <i class="bi bi-shield-check fs-5"></i>
+                            </div>
+                            <div>
+                                <div class="small text-muted">Instant Coverage</div>
+                                <div class="fw-bold text-white">Zero Deposit Option</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fast Booking Search Bar -->
+        <div class="search-banner-box">
+            <form asp-controller="Vehicle" asp-action="Index" method="get">
+                <div class="row g-3 align-items-end">
+                    <div class="col-lg-3 col-md-6">
+                        <label class="form-label text-muted small fw-bold"><i class="bi bi-geo-alt me-1 text-primary"></i> Pick-up Location</label>
+                        <select name="location" class="form-select input-custom">
+                            <option value="Beverly Hills Showroom">Downtown Luxury Showroom</option>
+                            <option value="LAX International Airport">International Airport (VIP T3)</option>
+                            <option value="Marina Bay Concierge">Coastline Marina Club</option>
+                            <option value="Private Hotel Delivery">Direct Hotel Delivery</option>
+                        </select>
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <label class="form-label text-muted small fw-bold"><i class="bi bi-calendar-event me-1 text-primary"></i> Pick-up Date</label>
+                        <input type="date" name="pickupDate" class="form-control input-custom" value="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" />
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <label class="form-label text-muted small fw-bold"><i class="bi bi-calendar2-check me-1 text-primary"></i> Return Date</label>
+                        <input type="date" name="returnDate" class="form-control input-custom" value="@DateTime.Today.AddDays(4).ToString("yyyy-MM-dd")" />
+                    </div>
+
+                    <div class="col-lg-3 col-md-6">
+                        <button type="submit" class="btn btn-luxury-primary w-100 py-2">
+                            <i class="bi bi-search"></i> Search Available Fleet
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</section>
+
+<!-- Category Pills Section -->
+<section class="container mb-5">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h2 class="h3 fw-bold mb-1">Browse by Category</h2>
+            <p class="text-muted small mb-0">Select your preferred automotive style</p>
+        </div>
+        <a asp-controller="Vehicle" asp-action="Index" class="btn btn-luxury-outline py-2 px-3 small">
+            View All Categories <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+    </div>
+
+    <div class="d-flex flex-wrap gap-2">
+        <a href="/Vehicle" class="filter-pill active">
+            <i class="bi bi-collection-fill"></i> All Fleet
+        </a>
+        <a href="/Vehicle?category=Sports" class="filter-pill">
+            <i class="bi bi-lightning-charge-fill text-warning"></i> Sports & Supercars
+        </a>
+        <a href="/Vehicle?category=Luxury" class="filter-pill">
+            <i class="bi bi-gem text-info"></i> Ultra Luxury
+        </a>
+        <a href="/Vehicle?category=SUV" class="filter-pill">
+            <i class="bi bi-compass-fill text-success"></i> Premium SUVs
+        </a>
+        <a href="/Vehicle?category=Electric" class="filter-pill">
+            <i class="bi bi-ev-front-fill text-cyan"></i> Electric & Plaid
+        </a>
+        <a href="/Vehicle?category=Sedan" class="filter-pill">
+            <i class="bi bi-briefcase-fill text-primary"></i> Executive Sedans
+        </a>
+    </div>
+</section>
+
+<!-- Featured Fleet Section -->
+<section id="featured-fleet" class="container mb-5 pb-4">
+    <div class="d-flex align-items-center justify-content-between mb-4">
+        <div>
+            <h2 class="h3 fw-bold mb-1">Featured Vehicles</h2>
+            <p class="text-muted small mb-0">Handpicked masterpieces ready for immediate booking</p>
+        </div>
+        <a asp-controller="Vehicle" asp-action="Index" class="btn btn-luxury-outline py-2 px-3 small">
+            Explore All (@featuredVehicles.Count) <i class="bi bi-arrow-right ms-1"></i>
+        </a>
+    </div>
+
+    <div class="row g-4">
+        @foreach (var car in featuredVehicles)
+        {
+            <div class="col-lg-4 col-md-6">
+                <div class="vehicle-card">
+                    <div class="vehicle-img-wrapper">
+                        <img src="@car.ImageUrl" alt="@car.FullName" class="vehicle-img" />
+                        <span class="badge-category">@car.Category</span>
+                        <span class="badge-availability @(car.IsAvailable ? "badge-available" : "badge-booked")">
+                            <i class="bi @(car.IsAvailable ? "bi-check-circle-fill" : "bi-clock-history") me-1"></i>
+                            @(car.IsAvailable ? "Available" : "Reserved")
+                        </span>
+                    </div>
+
+                    <div class="vehicle-content">
+                        <div class="d-flex justify-content-between align-items-center mb-1">
+                            <span class="vehicle-make">@car.Make</span>
+                            <div class="small text-warning">
+                                <i class="bi bi-star-fill"></i> @car.Rating <span class="text-dim">(@car.ReviewCount)</span>
+                            </div>
+                        </div>
+
+                        <h3 class="vehicle-name">@car.Model</h3>
+
+                        <!-- Quick Specs Grid -->
+                        <div class="specs-grid">
+                            <div class="spec-item">
+                                <i class="bi bi-fuel-pump spec-icon"></i>
+                                <span class="spec-label">Fuel</span>
+                                <span class="spec-val">@car.FuelType</span>
+                            </div>
+                            <div class="spec-item">
+                                <i class="bi bi-gear-wide-connected spec-icon"></i>
+                                <span class="spec-label">Trans</span>
+                                <span class="spec-val">@car.Transmission</span>
+                            </div>
+                            <div class="spec-item">
+                                <i class="bi bi-people spec-icon"></i>
+                                <span class="spec-label">Seats</span>
+                                <span class="spec-val">@car.Seats Seats</span>
+                            </div>
+                        </div>
+
+                        <div class="d-flex align-items-center justify-content-between mt-auto pt-2">
+                            <div class="price-tag">
+                                <span class="price-currency">₹</span>
+                                <span class="price-amount">@car.DailyRate.ToString("N0")</span>
+                                <span class="price-period">/ day</span>
+                            </div>
+
+                            <div class="d-flex gap-2">
+                                <a asp-controller="Vehicle" asp-action="Details" asp-route-id="@car.Id" class="btn btn-luxury-outline py-2 px-3" style="font-size: 0.85rem;" title="View Details">
+                                    <i class="bi bi-info-circle"></i>
+                                </a>
+                                @if (car.IsAvailable)
+                                {
+                                    <a asp-controller="Booking" asp-action="Create" asp-route-vehicleId="@car.Id" class="btn btn-luxury-primary py-2 px-3" style="font-size: 0.85rem;">
+                                        Rent <i class="bi bi-chevron-right ms-1"></i>
+                                    </a>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-secondary py-2 px-3" disabled style="font-size: 0.85rem; opacity: 0.6;">
+                                        Booked
+                                    </button>
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- Value Proposition Features -->
+<section class="container mb-5 py-4">
+    <div class="row g-4 text-center">
+        <div class="col-md-3">
+            <div class="p-4 rounded-4" style="background: var(--bg-card); border: 1px solid var(--border);">
+                <div class="rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 56px; height: 56px; background: rgba(99,102,241,0.15); color: #818cf8;">
+                    <i class="bi bi-lightning-charge-fill fs-4"></i>
+                </div>
+                <h5 class="fw-bold text-white mb-2">Instant Confirmation</h5>
+                <p class="text-muted small mb-0">Book directly in 60 seconds with real-time fleet availability and digital key access.</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="p-4 rounded-4" style="background: var(--bg-card); border: 1px solid var(--border);">
+                <div class="rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 56px; height: 56px; background: rgba(16,185,129,0.15); color: #10b981;">
+                    <i class="bi bi-shield-check fs-4"></i>
+                </div>
+                <h5 class="fw-bold text-white mb-2">Comprehensive Insurance</h5>
+                <p class="text-muted small mb-0">Full premium collision and roadside protection included with every reservation.</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="p-4 rounded-4" style="background: var(--bg-card); border: 1px solid var(--border);">
+                <div class="rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 56px; height: 56px; background: rgba(245,158,11,0.15); color: #f59e0b;">
+                    <i class="bi bi-geo-alt-fill fs-4"></i>
+                </div>
+                <h5 class="fw-bold text-white mb-2">Doorstep Delivery</h5>
+                <p class="text-muted small mb-0">White-glove vehicle drop-off at your hotel, home, or VIP airport terminal.</p>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="p-4 rounded-4" style="background: var(--bg-card); border: 1px solid var(--border);">
+                <div class="rounded-circle mx-auto mb-3 d-flex align-items-center justify-content-center" style="width: 56px; height: 56px; background: rgba(6,182,212,0.15); color: #06b6d4;">
+                    <i class="bi bi-headset fs-4"></i>
+                </div>
+                <h5 class="fw-bold text-white mb-2">24/7 VIP Concierge</h5>
+                <p class="text-muted small mb-0">Dedicated luxury support team ready to assist your journey at any hour.</p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- CTA Banner -->
+<section class="container mb-5">
+    <div class="p-5 rounded-4 text-center position-relative overflow-hidden" 
+         style="background: linear-gradient(135deg, rgba(79, 70, 229, 0.3) 0%, rgba(6, 182, 212, 0.2) 100%), var(--bg-surface); border: 1px solid var(--border);">
+        <h2 class="display-6 fw-bold text-white mb-3">Ready to Experience Pure Driving Exhilaration?</h2>
+        <p class="text-muted max-w-lg mx-auto mb-4" style="max-width: 600px;">
+            Join over 500 discerning drivers who trust EliteDrive for weekend getaways, business travel, and milestone celebrations.
+        </p>
+        <a asp-controller="Vehicle" asp-action="Index" class="btn btn-luxury-primary py-3 px-5 fs-6">
+            <i class="bi bi-key me-2"></i> Reserve Your Vehicle Now
+        </a>
+    </div>
+</section>

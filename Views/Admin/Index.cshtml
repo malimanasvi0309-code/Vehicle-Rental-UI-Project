@@ -1,0 +1,214 @@
+@model AdminDashboardViewModel
+@{
+    ViewData["Title"] = "Admin Control Hub - EliteDrive";
+    var utilization = Model.TotalVehicles > 0 ? (int)(((double)(Model.TotalVehicles - Model.AvailableVehicles) / Model.TotalVehicles) * 100) : 0;
+}
+
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <div class="badge bg-warning text-dark py-1 px-3 rounded-pill fw-bold small mb-2">
+                <i class="bi bi-shield-lock-fill me-1"></i> Management Portal
+            </div>
+            <h1 class="h2 fw-bold text-white mb-0">Executive Fleet Dashboard</h1>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <a asp-action="AddVehicle" class="btn btn-luxury-primary py-2 px-3 small">
+                <i class="bi bi-plus-circle me-1"></i> Add New Vehicle
+            </a>
+            <a asp-action="Vehicles" class="btn btn-luxury-outline py-2 px-3 small">
+                <i class="bi bi-car-front me-1"></i> Manage Fleet
+            </a>
+            <a asp-action="Bookings" class="btn btn-luxury-outline py-2 px-3 small">
+                <i class="bi bi-calendar3 me-1"></i> All Bookings
+            </a>
+        </div>
+    </div>
+
+    <!-- Admin Metric Tiles -->
+    <div class="row g-4 mb-4">
+        <!-- Revenue -->
+        <div class="col-xl-3 col-sm-6">
+            <div class="stat-card">
+                <div>
+                    <span class="stat-label">Total Revenue</span>
+                    <div class="stat-value text-success">₹@Model.TotalRevenue.ToString("N0")</div>
+                    <small class="text-dim"><i class="bi bi-arrow-up-right text-success me-1"></i> +18.4% this month</small>
+                </div>
+                <div class="stat-icon-box" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+                    <i class="bi bi-cash-stack"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Active Bookings -->
+        <div class="col-xl-3 col-sm-6">
+            <div class="stat-card">
+                <div>
+                    <span class="stat-label">Active / Confirmed</span>
+                    <div class="stat-value text-primary">@Model.ActiveBookings</div>
+                    <small class="text-dim">Out of @Model.TotalBookings total orders</small>
+                </div>
+                <div class="stat-icon-box" style="background: rgba(79, 70, 229, 0.15); color: #818cf8;">
+                    <i class="bi bi-calendar-check-fill"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Fleet Utilization -->
+        <div class="col-xl-3 col-sm-6">
+            <div class="stat-card">
+                <div>
+                    <span class="stat-label">Fleet Size</span>
+                    <div class="stat-value">@Model.TotalVehicles</div>
+                    <small class="text-success"><i class="bi bi-check-circle me-1"></i> @Model.AvailableVehicles Available Now</small>
+                </div>
+                <div class="stat-icon-box" style="background: rgba(6, 182, 212, 0.15); color: #06b6d4;">
+                    <i class="bi bi-car-front-fill"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registered Customers -->
+        <div class="col-xl-3 col-sm-6">
+            <div class="stat-card">
+                <div>
+                    <span class="stat-label">Total Clients</span>
+                    <div class="stat-value" style="color: #f59e0b;">@Model.TotalCustomers</div>
+                    <small class="text-dim">Verified driver licenses</small>
+                </div>
+                <div class="stat-icon-box" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
+                    <i class="bi bi-people-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Navigation Hub -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <a asp-action="Vehicles" class="p-4 rounded-4 d-block text-decoration-none shadow" style="background: var(--bg-surface); border: 1px solid var(--border); transition: var(--transition-smooth);">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="text-white fw-bold fs-5">Fleet Management</span>
+                    <i class="bi bi-car-front fs-4 text-cyan"></i>
+                </div>
+                <p class="text-muted small mb-0">View all vehicles, edit specifications, toggle instant availability, and remove retired units.</p>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a asp-action="Bookings" class="p-4 rounded-4 d-block text-decoration-none shadow" style="background: var(--bg-surface); border: 1px solid var(--border); transition: var(--transition-smooth);">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="text-white fw-bold fs-5">Reservations Console</span>
+                    <i class="bi bi-journal-check fs-4 text-primary"></i>
+                </div>
+                <p class="text-muted small mb-0">Track live rentals, verify pick-up dates, approve extensions, and update customer booking statuses.</p>
+            </a>
+        </div>
+        <div class="col-md-4">
+            <a asp-action="Customers" class="p-4 rounded-4 d-block text-decoration-none shadow" style="background: var(--bg-surface); border: 1px solid var(--border); transition: var(--transition-smooth);">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="text-white fw-bold fs-5">Customer Directory</span>
+                    <i class="bi bi-person-lines-fill fs-4 text-warning"></i>
+                </div>
+                <p class="text-muted small mb-0">Review verified driver profiles, contact details, total rentals, and member loyalty tiers.</p>
+            </a>
+        </div>
+    </div>
+
+    <!-- Recent Bookings Table -->
+    <div class="p-4 rounded-4 shadow-lg mb-4" style="background: var(--bg-surface); border: 1px solid var(--border);">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <div>
+                <h4 class="h5 fw-bold text-white mb-0">Recent Rental Orders</h4>
+                <small class="text-dim">Real-time reservation requests across all locations</small>
+            </div>
+            <a asp-action="Bookings" class="btn btn-luxury-outline py-1 px-3 small">View All Bookings</a>
+        </div>
+
+        <div class="table-responsive">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>Booking Ref</th>
+                        <th>Client</th>
+                        <th>Vehicle</th>
+                        <th>Rental Period</th>
+                        <th>Total</th>
+                        <th>Status</th>
+                        <th class="text-end">Manage</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var b in Model.RecentBookings)
+                    {
+                        <tr>
+                            <td class="font-monospace text-primary fw-bold">@b.BookingReference</td>
+                            <td>
+                                <div class="fw-bold text-white">@b.CustomerName</div>
+                                <small class="text-dim">@b.CustomerEmail</small>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-white">@b.Vehicle?.FullName</div>
+                                <small class="text-dim">Plate: @b.Vehicle?.LicensePlate</small>
+                            </td>
+                            <td>
+                                <div>@b.StartDate.ToString("MMM dd") - @b.EndDate.ToString("MMM dd, yyyy")</div>
+                                <small class="text-dim">@b.TotalDays Days</small>
+                            </td>
+                            <td class="fw-bold text-success">₹@b.TotalAmount.ToString("N0")</td>
+                            <td>
+                                @if (b.Status == BookingStatus.Active)
+                                {
+                                    <span class="status-pill status-active">Active</span>
+                                }
+                                else if (b.Status == BookingStatus.Confirmed)
+                                {
+                                    <span class="status-pill status-confirmed">Confirmed</span>
+                                }
+                                else if (b.Status == BookingStatus.Completed)
+                                {
+                                    <span class="status-pill status-completed">Completed</span>
+                                }
+                                else
+                                {
+                                    <span class="status-pill status-cancelled">Cancelled</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <div class="dropdown">
+                                    <button class="btn btn-luxury-outline py-1 px-2 small dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                        Update
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end bg-dark border-secondary">
+                                        <li>
+                                            <form asp-action="UpdateBookingStatus" method="post">
+                                                <input type="hidden" name="id" value="@b.Id" />
+                                                <input type="hidden" name="status" value="@BookingStatus.Active" />
+                                                <button type="submit" class="dropdown-item text-success small">Mark Active (Key Picked Up)</button>
+                                            </form>
+                                        </li>
+                                        <li>
+                                            <form asp-action="UpdateBookingStatus" method="post">
+                                                <input type="hidden" name="id" value="@b.Id" />
+                                                <input type="hidden" name="status" value="@BookingStatus.Completed" />
+                                                <button type="submit" class="dropdown-item text-white small">Mark Completed (Car Returned)</button>
+                                            </form>
+                                        </li>
+                                        <li>
+                                            <form asp-action="UpdateBookingStatus" method="post">
+                                                <input type="hidden" name="id" value="@b.Id" />
+                                                <input type="hidden" name="status" value="@BookingStatus.Cancelled" />
+                                                <button type="submit" class="dropdown-item text-danger small">Cancel Booking</button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

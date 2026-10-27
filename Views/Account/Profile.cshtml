@@ -1,0 +1,152 @@
+@model User
+@{
+    ViewData["Title"] = $"{Model.FullName} - Member Profile";
+    var bookings = ViewBag.Bookings as List<Booking> ?? new List<Booking>();
+}
+
+<div class="container py-4">
+    <!-- Header -->
+    <div class="p-4 p-md-5 rounded-4 mb-4 shadow-lg" style="background: var(--bg-surface); border: 1px solid var(--border);">
+        <div class="row align-items-center g-4">
+            <div class="col-md-auto text-center">
+                <img src="@Model.AvatarUrl" alt="@Model.FullName" class="rounded-circle shadow-lg border border-2 border-primary" style="width: 100px; height: 100px; object-fit: cover;" />
+            </div>
+            <div class="col-md">
+                <div class="d-flex flex-wrap align-items-center gap-2 mb-1">
+                    <h1 class="h3 fw-bold text-white mb-0">@Model.FullName</h1>
+                    <span class="role-badge @(Model.Role == UserRole.Admin ? "role-badge-admin" : "role-badge-customer") fs-6 py-1 px-3">
+                        @(Model.Role == UserRole.Admin ? "ADMINISTRATOR" : "VIP MEMBER")
+                    </span>
+                </div>
+                <div class="text-muted small mb-2">
+                    <span><i class="bi bi-envelope me-1 text-primary"></i> @Model.Email</span>
+                    <span class="mx-2">&bull;</span>
+                    <span><i class="bi bi-telephone me-1 text-primary"></i> @Model.Phone</span>
+                    <span class="mx-2">&bull;</span>
+                    <span><i class="bi bi-card-heading me-1 text-primary"></i> License: @Model.DriverLicenseNumber</span>
+                </div>
+                <div class="small text-dim">
+                    Member since @Model.MemberSince.ToString("MMMM yyyy") &bull; Preferred Hub: Downtown Luxury Showroom
+                </div>
+            </div>
+            <div class="col-md-auto d-flex flex-wrap gap-2">
+                @if (Model.Role == UserRole.Admin)
+                {
+                    <a asp-controller="Admin" asp-action="Index" class="btn btn-warning text-dark fw-bold py-2 px-3 small">
+                        <i class="bi bi-speedometer me-1"></i> Admin Dashboard
+                    </a>
+                }
+                <a asp-controller="Booking" asp-action="MyBookings" class="btn btn-luxury-primary py-2 px-3 small">
+                    <i class="bi bi-calendar-check me-1"></i> My Bookings
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Metrics Row -->
+    <div class="row g-4 mb-4">
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div>
+                    <span class="stat-label">Total Reservations</span>
+                    <div class="stat-value">@bookings.Count</div>
+                </div>
+                <div class="stat-icon-box" style="background: rgba(99, 102, 241, 0.15); color: #818cf8;">
+                    <i class="bi bi-car-front-fill"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div>
+                    <span class="stat-label">Total Spent</span>
+                    <div class="stat-value">₹@bookings.Where(b => b.Status != BookingStatus.Cancelled).Sum(b => b.TotalAmount).ToString("N0")</div>
+                </div>
+                <div class="stat-icon-box" style="background: rgba(16, 185, 129, 0.15); color: #10b981;">
+                    <i class="bi bi-wallet2"></i>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div>
+                    <span class="stat-label">Tier Status</span>
+                    <div class="stat-value" style="font-size: 1.6rem; color: #f59e0b;">Diamond Club</div>
+                </div>
+                <div class="stat-icon-box" style="background: rgba(245, 158, 11, 0.15); color: #f59e0b;">
+                    <i class="bi bi-award-fill"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Recent Reservation History -->
+    <div class="p-4 rounded-4" style="background: var(--bg-surface); border: 1px solid var(--border);">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h4 class="h5 fw-bold text-white mb-0">Recent Rental Activity</h4>
+            <a asp-controller="Booking" asp-action="MyBookings" class="btn btn-luxury-outline py-1 px-3 small">View All</a>
+        </div>
+
+        @if (bookings.Any())
+        {
+            <div class="table-responsive">
+                <table class="custom-table">
+                    <thead>
+                        <tr>
+                            <th>Reference</th>
+                            <th>Vehicle</th>
+                            <th>Dates</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var b in bookings.Take(5))
+                        {
+                            <tr>
+                                <td class="font-monospace text-primary fw-bold">@b.BookingReference</td>
+                                <td>
+                                    <div class="fw-bold text-white">@b.Vehicle?.FullName</div>
+                                    <small class="text-dim">@b.Vehicle?.Category</small>
+                                </td>
+                                <td>
+                                    <div>@b.StartDate.ToString("MMM dd") - @b.EndDate.ToString("MMM dd, yyyy")</div>
+                                    <small class="text-dim">@b.TotalDays Days</small>
+                                </td>
+                                <td class="fw-bold text-success">₹@b.TotalAmount.ToString("N0")</td>
+                                <td>
+                                    @if (b.Status == BookingStatus.Active)
+                                    {
+                                        <span class="status-pill status-active">Active</span>
+                                    }
+                                    else if (b.Status == BookingStatus.Confirmed)
+                                    {
+                                        <span class="status-pill status-confirmed">Confirmed</span>
+                                    }
+                                    else if (b.Status == BookingStatus.Completed)
+                                    {
+                                        <span class="status-pill status-completed">Completed</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="status-pill status-cancelled">Cancelled</span>
+                                    }
+                                </td>
+                                <td class="text-end">
+                                    <a asp-controller="Booking" asp-action="Confirmation" asp-route-reference="@b.BookingReference" class="btn btn-luxury-outline py-1 px-2 small">
+                                        Voucher
+                                    </a>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        }
+        else
+        {
+            <p class="text-muted small mb-0">No past rental history found.</p>
+        }
+    </div>
+</div>

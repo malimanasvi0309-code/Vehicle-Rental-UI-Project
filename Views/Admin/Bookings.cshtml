@@ -1,0 +1,148 @@
+@model List<Booking>
+@{
+    ViewData["Title"] = "Reservations Console - Admin Portal";
+    var selectedStatus = ViewBag.SelectedStatus as string ?? "All";
+}
+
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb small text-muted mb-1">
+                    <li class="breadcrumb-item"><a asp-action="Index" class="text-dim">Dashboard</a></li>
+                    <li class="breadcrumb-item active text-white" aria-current="page">Reservations Console</li>
+                </ol>
+            </nav>
+            <h1 class="h2 fw-bold text-white mb-0">Customer Reservations</h1>
+        </div>
+        <div class="d-flex gap-2">
+            <a asp-action="Index" class="btn btn-luxury-outline py-2 px-3 small">
+                <i class="bi bi-arrow-left me-1"></i> Dashboard
+            </a>
+        </div>
+    </div>
+
+    <!-- Filter Tabs by Status -->
+    <div class="d-flex flex-wrap gap-2 mb-4">
+        <a asp-action="Bookings" asp-route-status="All" class="filter-pill @(selectedStatus == "All" ? "active" : "")">
+            All Reservations (@Model.Count)
+        </a>
+        <a asp-action="Bookings" asp-route-status="Active" class="filter-pill @(selectedStatus == "Active" ? "active" : "")">
+            <i class="bi bi-broadcast text-success"></i> Active On Road
+        </a>
+        <a asp-action="Bookings" asp-route-status="Confirmed" class="filter-pill @(selectedStatus == "Confirmed" ? "active" : "")">
+            <i class="bi bi-calendar-check text-primary"></i> Confirmed & Ready
+        </a>
+        <a asp-action="Bookings" asp-route-status="Completed" class="filter-pill @(selectedStatus == "Completed" ? "active" : "")">
+            <i class="bi bi-flag text-muted"></i> Completed
+        </a>
+        <a asp-action="Bookings" asp-route-status="Cancelled" class="filter-pill @(selectedStatus == "Cancelled" ? "active" : "")">
+            <i class="bi bi-x-circle text-danger"></i> Cancelled
+        </a>
+    </div>
+
+    <!-- Table Card -->
+    <div class="p-4 rounded-4 shadow-lg" style="background: var(--bg-surface); border: 1px solid var(--border);">
+        <div class="table-responsive">
+            <table class="custom-table">
+                <thead>
+                    <tr>
+                        <th>Booking Ref</th>
+                        <th>Client Info</th>
+                        <th>Vehicle</th>
+                        <th>Dates & Hub</th>
+                        <th>Amount</th>
+                        <th>Status</th>
+                        <th class="text-end">Update Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var b in Model)
+                    {
+                        <tr>
+                            <td class="font-monospace text-primary fw-bold">@b.BookingReference</td>
+                            <td>
+                                <div class="fw-bold text-white">@b.CustomerName</div>
+                                <small class="text-dim">@b.CustomerEmail</small>
+                                <div class="small text-muted">@b.CustomerPhone</div>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-white">@b.Vehicle?.FullName</div>
+                                <small class="text-dim">Plate: @b.Vehicle?.LicensePlate</small>
+                            </td>
+                            <td>
+                                <div>@b.StartDate.ToString("MMM dd") - @b.EndDate.ToString("MMM dd, yyyy")</div>
+                                <small class="text-dim"><i class="bi bi-geo-alt"></i> @b.PickupLocation</small>
+                            </td>
+                            <td>
+                                <div class="fw-bold text-success fs-6">₹@b.TotalAmount.ToString("N0")</div>
+                                <small class="text-dim">@b.TotalDays Days &times; ₹@b.DailyRate.ToString("N0")</small>
+                            </td>
+                            <td>
+                                @if (b.Status == BookingStatus.Active)
+                                {
+                                    <span class="status-pill status-active">Active</span>
+                                }
+                                else if (b.Status == BookingStatus.Confirmed)
+                                {
+                                    <span class="status-pill status-confirmed">Confirmed</span>
+                                }
+                                else if (b.Status == BookingStatus.Completed)
+                                {
+                                    <span class="status-pill status-completed">Completed</span>
+                                }
+                                else
+                                {
+                                    <span class="status-pill status-cancelled">Cancelled</span>
+                                }
+                            </td>
+                            <td class="text-end">
+                                <div class="dropdown">
+                                    <button class="btn btn-luxury-outline py-1 px-2 small dropdown-toggle" type="button" data-bs-toggle="dropdown">
+                                        Action
+                                    </button>
+                                    <ul class="dropdown-menu dropdown-menu-end bg-dark border-secondary">
+                                        <li>
+                                            <a class="dropdown-item text-white small" asp-controller="Booking" asp-action="Confirmation" asp-route-reference="@b.BookingReference">
+                                                <i class="bi bi-receipt me-1"></i> View Receipt
+                                            </a>
+                                        </li>
+                                        <li><hr class="dropdown-divider border-secondary"></li>
+                                        <li>
+                                            <form asp-action="UpdateBookingStatus" method="post">
+                                                <input type="hidden" name="id" value="@b.Id" />
+                                                <input type="hidden" name="status" value="@BookingStatus.Active" />
+                                                <button type="submit" class="dropdown-item text-success small">
+                                                    <i class="bi bi-key me-1"></i> Key Handover (Active)
+                                                </button>
+                                            </form>
+                                        </li>
+                                        <li>
+                                            <form asp-action="UpdateBookingStatus" method="post">
+                                                <input type="hidden" name="id" value="@b.Id" />
+                                                <input type="hidden" name="status" value="@BookingStatus.Completed" />
+                                                <button type="submit" class="dropdown-item text-white small">
+                                                    <i class="bi bi-check2-circle me-1"></i> Car Returned (Completed)
+                                                </button>
+                                            </form>
+                                        </li>
+                                        <li>
+                                            <form asp-action="UpdateBookingStatus" method="post">
+                                                <input type="hidden" name="id" value="@b.Id" />
+                                                <input type="hidden" name="status" value="@BookingStatus.Cancelled" />
+                                                <button type="submit" class="dropdown-item text-danger small">
+                                                    <i class="bi bi-x-circle me-1"></i> Cancel Booking
+                                                </button>
+                                            </form>
+                                        </li>
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
